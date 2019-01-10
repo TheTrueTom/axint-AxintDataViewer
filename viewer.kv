@@ -1,0 +1,56 @@
+#:kivy 1.0
+#:import listadapter kivy.adapters.listadapter
+#:import listview kivy.uix.listview
+
+Root:
+	BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: 'Open'
+                on_release: root.show_load()
+            Button:
+                text: 'Append'
+                on_release: root.show_append()
+            Button:
+                text: 'Quit'
+                on_release: app.Exit()
+
+        BoxLayout:
+        	id: mainbox
+        	BoxLayout:
+        		size_hint: 0.2, 1
+        		orientation: 'vertical'
+	            ListView:
+	                id: list_view
+	                adapter: listadapter.ListAdapter(data=[],cls=listview.ListItemButton, selection_mode='single')
+	            Button:
+	            	size_hint_y: None
+	            	height: 30
+	            	text: 'Delete'
+	            	on_release: root.remove_selection()
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<ListItemButton>
+    selected_color: 1,1,1,1
+    deselected_color: 0.6,0.6,0.6,1
