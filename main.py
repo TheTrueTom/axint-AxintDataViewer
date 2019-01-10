@@ -80,7 +80,7 @@ class Root(FloatLayout):
 	def updateListView(self):
 		theList = []
 		for element in self.data:
-			theList.append(element.probe + '_' + element.sensor)
+			theList.append(element.probe + '_' + element.sensor + ' ' + element.date.strftime("%d-%m-%Y %Hh"))
 
 		self.ids.list_view.item_strings = theList
 
@@ -100,15 +100,21 @@ class Root(FloatLayout):
 		file = open(path, 'r')
 		out = csv.reader(file, lineterminator='\n', delimiter=',', quotechar="\"", quoting=csv.QUOTE_ALL)
 
-		date = date = datetime.datetime.strptime(path[-18:-4], "%d-%m-%Y_%Hh")
-
 		all_data = []
 
 		for row in out:
 			if row[0] == 'Chan':
 				for item in row[1:]:
-					probe = item[6:13]
-					sensor = item[14:16]
+					try:
+						date = datetime.datetime.strptime(path[-18:-4], "%d-%m-%Y_%Hh")
+						probe = item[6:13]
+						sensor = item[14:16]
+					except:
+						date = datetime.datetime.strptime(item, "%d-%m-%Y_%Hh")
+						probe = path[1:8]
+						sensor = path[9:11]
+
+					print(date, probe, sensor)
 
 					obj = SensorData(date, {}, probe, sensor)
 					all_data.append(obj)
@@ -143,6 +149,7 @@ class Root(FloatLayout):
 		plt.ylabel('Hits/h')
 		plt.xlabel('Channel')
 		plt.subplot_tool()
+
 		plt.gcf()
 
 		App.get_running_app().graphWidget.draw_idle()
